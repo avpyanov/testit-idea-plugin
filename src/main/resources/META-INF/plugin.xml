@@ -1,0 +1,51 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.github.idea-plugin</id>
+
+    <!-- Public plugin name should be written in Title Case.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+    <name>Test IT Idea</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor email="" url=""/>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+         Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+         Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+    <description>Test IT plugin for Idea</description>
+
+    <!-- Product and plugin compatibility requirements.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+    <depends>com.intellij.modules.java</depends>
+    <depends>com.intellij.modules.platform</depends>
+
+    <!-- Extension points defined by the plugin.
+         Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+    <extensions defaultExtensionNs="com.intellij">
+        <applicationService serviceImplementation="com.github.avpyanov.ideaplugin.testit.TestItSettingsStorage"/>
+        <applicationService serviceImplementation="com.github.avpyanov.ideaplugin.settings.ExportSettingsStorage"/>
+    </extensions>
+    <actions>
+        <group id="projectView" popup="true" text="TestIT">
+            <add-to-group group-id="ProjectViewPopupMenu"
+                          anchor="after"
+                          relative-to-action="ProjectViewPopupMenuRefactoringGroup"/>
+            <action id="com.github.avpyanov.ideaplugin.actions.TestItSettings"
+                    class="com.github.avpyanov.ideaplugin.actions.TestItSettings" text="TestIT Settings"/>
+
+            <action id="com.github.avpyanov.ideaplugin.actions.ExportToXls"
+                    class="com.github.avpyanov.ideaplugin.actions.ExportToXls" text="Export to Xls"/>
+        </group>
+        <group id="editor" popup="true" text="TestIT">
+            <add-to-group group-id="EditorPopupMenu"
+                          relative-to-action="EditorPopupMenu1"
+                          anchor="before"/>
+            <action id="com.github.avpyanov.ideaplugin.actions.CreateAutotest"
+                    class="com.github.avpyanov.ideaplugin.actions.CreateAutotest" text="Create Autotest"/>
+            <action id="com.github.avpyanov.ideaplugin.actions.CreateAutotestAndWorkItem"
+                    class="com.github.avpyanov.ideaplugin.actions.CreateAutotestAndWorkItem"
+                    text="Create Autotest and WorkItem"/>
+        </group>
+    </actions>
+</idea-plugin>
