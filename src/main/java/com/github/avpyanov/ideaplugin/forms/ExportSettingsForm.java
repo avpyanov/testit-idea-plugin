@@ -80,6 +80,7 @@ class ExportSettingsForm {
         if (testRunner.getSelectedItem() == TestRunners.JUNIT5.value()) {
             testAnnotation.setText(Annotations.JUNIT5_TEST_ANNOTATION);
             testNameAnnotation.setText(Annotations.JUNIT5_DISPLAY_NAME_ANNOTATION);
+            testNameAnnotation.setEnabled(true);
         }
         if (testRunner.getSelectedItem() == TestRunners.TESTNG.value()) {
             testAnnotation.setText(Annotations.TESTNG_TEST_ANNOTATION);

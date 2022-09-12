@@ -31,11 +31,10 @@
             <add-to-group group-id="ProjectViewPopupMenu"
                           anchor="after"
                           relative-to-action="ProjectViewPopupMenuRefactoringGroup"/>
-            <action id="com.github.avpyanov.ideaplugin.actions.TestItSettings"
-                    class="com.github.avpyanov.ideaplugin.actions.TestItSettings" text="TestIT Settings"/>
-
             <action id="com.github.avpyanov.ideaplugin.actions.ExportToXls"
                     class="com.github.avpyanov.ideaplugin.actions.ExportToXls" text="Export to Xls"/>
+            <action id="com.github.avpyanov.ideaplugin.actions.TestItSettings"
+                    class="com.github.avpyanov.ideaplugin.actions.TestItSettings" text="TestIT Settings"/>
         </group>
         <group id="editor" popup="true" text="TestIT">
             <add-to-group group-id="EditorPopupMenu"
