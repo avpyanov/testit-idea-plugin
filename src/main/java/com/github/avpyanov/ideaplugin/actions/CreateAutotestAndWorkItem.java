@@ -1,5 +1,6 @@
 package com.github.avpyanov.ideaplugin.actions;
 
+import com.github.avpyanov.ideaplugin.PluginException;
 import com.github.avpyanov.ideaplugin.model.TestCase;
 import com.github.avpyanov.ideaplugin.settings.ExportSettingsStorage;
 import com.github.avpyanov.ideaplugin.testit.TestItSettingsStorage;
@@ -19,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.Objects;
-
 
 public class CreateAutotestAndWorkItem extends AnAction {
 
@@ -42,8 +42,12 @@ public class CreateAutotestAndWorkItem extends AnAction {
                     autotestToCreate.setClassname(className);
                     autotestToCreate.setNamespace(packageName);
                     autotestToCreate.setShouldCreateWorkItem(true);
-                    AutotestDto autotest = testItApi.getAutotestsClient().createAutotest(autotestToCreate);
-                    AnnotationUtils.addTmsAnnotation(entry.getKey(), String.valueOf(autotest.getGlobalId()));
+                    try {
+                        AutotestDto autotest = testItApi.getAutotestsClient().createAutotest(autotestToCreate);
+                        AnnotationUtils.addTmsAnnotation(entry.getKey(), String.valueOf(autotest.getGlobalId()));
+                    } catch (Exception e) {
+                        throw new PluginException("Failed to create autotest and work item", e);
+                    }
                 }
             }
         }

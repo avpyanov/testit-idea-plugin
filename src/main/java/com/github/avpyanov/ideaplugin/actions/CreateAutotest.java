@@ -1,5 +1,6 @@
 package com.github.avpyanov.ideaplugin.actions;
 
+import com.github.avpyanov.ideaplugin.PluginException;
 import com.github.avpyanov.ideaplugin.model.TestCase;
 import com.github.avpyanov.ideaplugin.settings.ExportSettingsStorage;
 import com.github.avpyanov.ideaplugin.testit.TestItSettingsStorage;
@@ -44,8 +45,12 @@ public class CreateAutotest extends AnAction {
                     autotestToCreate.setNamespace(packageName);
 
                     autotestToCreate.setShouldCreateWorkItem(false);
-                    AutotestDto autotest = testItApi.getAutotestsClient().createAutotest(autotestToCreate);
-                    AnnotationUtils.addTmsAnnotation(entry.getKey(), String.valueOf(autotest.getGlobalId()));
+                    try {
+                        AutotestDto autotest = testItApi.getAutotestsClient().createAutotest(autotestToCreate);
+                        AnnotationUtils.addTmsAnnotation(entry.getKey(), String.valueOf(autotest.getGlobalId()));
+                    } catch (Exception e) {
+                        throw new PluginException("Failed to create autotest", e);
+                    }
                 }
             }
         }

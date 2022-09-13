@@ -10,6 +10,6 @@ public class TestItSettings extends AnAction {
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
         final TestItSettingsForm form = new TestItSettingsForm();
-        form.setVisible();
+        form.setVisible(true);
     }
 }
