@@ -11,6 +11,7 @@ import com.intellij.psi.codeStyle.JavaCodeStyleManager;
 import com.intellij.psi.search.GlobalSearchScope;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.github.avpyanov.ideaplugin.Annotations.*;
@@ -26,17 +27,14 @@ public class PsiUtils {
                 .collect(Collectors.toMap(m -> m, PsiUtils::exportTestCaseFromMethod));
     }
 
-    private static TestCase exportTestCaseFromMethod(final PsiMethod method) {
-        final TestCase testCase = new TestCase();
-        testCase.setName(getName(method));
-        testCase.setEpic(getAnnotationValue(method, ALLURE_EPIC_ANNOTATION));
-        testCase.setFeature(getAnnotationValue(method, ALLURE_FEATURE_ANNOTATION));
-        testCase.setStory(getAnnotationValue(method, ALLURE_STORY_ANNOTATION));
-        testCase.setSteps(getSteps(method));
-        return testCase;
+    public static Map<PsiMethod, TestCase> getTests(final PsiElement element) {
+        final PsiClass psiClass = (PsiClass) element;
+        return Arrays.stream(psiClass.getMethods())
+                .filter(m -> m.hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getTestAnnotation()))
+                .collect(Collectors.toMap(m -> m, PsiUtils::exportTestCase));
     }
 
-    private static List<TestStep> getSteps(final PsiMethod method) {
+    public static List<TestStep> getSteps(final PsiMethod method) {
         final PsiStatement[] statements = Optional.ofNullable(method.getBody())
                 .map(PsiCodeBlock::getStatements)
                 .orElse(new PsiStatement[]{});
@@ -57,6 +55,25 @@ public class PsiUtils {
                 .map(s -> AnnotationUtil.getStringAttributeValue(s, "value"))
                 .map(s -> new TestStep().setName(s))
                 .collect(Collectors.toList());
+    }
+
+    private static TestCase exportTestCaseFromMethod(final PsiMethod method) {
+        final TestCase testCase = new TestCase();
+        testCase.setName(getName(method));
+        testCase.setEpic(getAnnotationValue(method, ALLURE_EPIC_ANNOTATION));
+        testCase.setFeature(getAnnotationValue(method, ALLURE_FEATURE_ANNOTATION));
+        testCase.setStory(getAnnotationValue(method, ALLURE_STORY_ANNOTATION));
+        testCase.setSteps(getSteps(method));
+        return testCase;
+    }
+
+    private static TestCase exportTestCase(final PsiMethod method) {
+        final TestCase testCase = new TestCase();
+        testCase.setName(getName(method));
+        testCase.setEpic(getAnnotationValue(method, ALLURE_EPIC_ANNOTATION));
+        testCase.setFeature(getAnnotationValue(method, ALLURE_FEATURE_ANNOTATION));
+        testCase.setStory(getAnnotationValue(method, ALLURE_STORY_ANNOTATION));
+        return testCase;
     }
 
     public static PsiAnnotation createAnnotation(final String annotation, final PsiElement context) {
@@ -121,19 +138,23 @@ public class PsiUtils {
 
     private static List<PsiElement> getPsiMethods(final PsiElement[] statements) {
         List<PsiElement> psiElements = new ArrayList<>();
-        for (PsiElement statement : statements) {
-            if (statement instanceof PsiMethodCallExpression) {
-                if (statement.getChildren().length == 0) {
-                    psiElements.add(statement);
-                }
-                if (statement.getChildren().length > 0) {
-                    psiElements.addAll(getPsiMethods(statement.getChildren()));
-                    psiElements.add(statement);
-                }
-            } else {
-                if (statement.getChildren().length > 0) {
-                    psiElements.addAll(getPsiMethods(statement.getChildren()));
-                }
+        Predicate<PsiElement> psiDeclaration = PsiDeclarationStatement.class::isInstance;
+        Predicate<PsiElement> psiLocalVariable = PsiLocalVariable.class::isInstance;
+        Predicate<PsiElement> psiExpression = PsiExpressionStatement.class::isInstance;
+        Predicate<PsiElement> psiReference = PsiReferenceExpression.class::isInstance;
+        Predicate<PsiElement> psiMethod = PsiMethodCallExpression.class::isInstance;
+
+        List<PsiElement> filteredStatements = Arrays.stream(statements)
+                .filter(psiDeclaration.or(psiLocalVariable).or(psiExpression).or(psiReference).or(psiMethod))
+                .collect(Collectors.toList());
+
+        for (PsiElement statement : filteredStatements) {
+            if (statement.getChildren().length == 0) {
+                psiElements.add(statement);
+            }
+            if (statement.getChildren().length > 0) {
+                psiElements.addAll(getPsiMethods(statement.getChildren()));
+                psiElements.add(statement);
             }
         }
         return psiElements;

@@ -41,10 +41,17 @@
                           relative-to-action="EditorPopupMenu1"
                           anchor="before"/>
             <action id="com.github.avpyanov.ideaplugin.actions.CreateAutotest"
-                    class="com.github.avpyanov.ideaplugin.actions.CreateAutotest" text="Create Autotest"/>
+                    class="com.github.avpyanov.ideaplugin.actions.CreateAutotest"
+                    text="Create Autotest"/>
             <action id="com.github.avpyanov.ideaplugin.actions.CreateAutotestAndWorkItem"
                     class="com.github.avpyanov.ideaplugin.actions.CreateAutotestAndWorkItem"
                     text="Create Autotest and WorkItem"/>
+            <action id="com.github.avpyanov.ideaplugin.actions.CreateAutotestForExistingWorkItem"
+                    class="com.github.avpyanov.ideaplugin.actions.CreateAutotestForExistingWorkItem"
+                    text="Create Autotest for WorkItem"/>
+            <action id="com.github.avpyanov.ideaplugin.actions.UpdateAutotest"
+                    class="com.github.avpyanov.ideaplugin.actions.UpdateAutotest"
+                    text="Update Autotest"/>
         </group>
     </actions>
 </idea-plugin>

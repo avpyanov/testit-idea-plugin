@@ -5,7 +5,7 @@ import com.github.avpyanov.ideaplugin.model.TestCase;
 import com.github.avpyanov.ideaplugin.settings.ExportSettingsStorage;
 import com.github.avpyanov.ideaplugin.testit.TestItSettingsStorage;
 import com.github.avpyanov.ideaplugin.utils.AnnotationUtils;
-import com.github.avpyanov.ideaplugin.utils.AutotestRequestDtoMapper;
+import com.github.avpyanov.ideaplugin.utils.AutotestDtoUtils;
 import com.github.avpyanov.ideaplugin.utils.PsiUtils;
 import com.github.avpyanov.testit.client.TestItApi;
 import com.github.avpyanov.testit.client.dto.AutotestDto;
@@ -37,13 +37,8 @@ public class CreateAutotest extends AnAction {
             for (Map.Entry<PsiMethod, TestCase> entry : testCaseMap.entrySet()) {
                 if (!entry.getKey().hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getTmsLinkAnnotation())) {
                     TestItApi testItApi = new TestItApi(Objects.requireNonNull(settings.getState()).getEndpoint(), settings.getState().getToken());
-                    AutotestPostRequestDto autotestToCreate = AutotestRequestDtoMapper.mapEntry(entry);
-
-                    autotestToCreate.setExternalId(packageName + ":" + className + ":" + entry.getKey().getName());
+                    AutotestPostRequestDto autotestToCreate = AutotestDtoUtils.mapEntry(packageName, className, entry);
                     autotestToCreate.setProjectId(settings.getState().getProjectId());
-                    autotestToCreate.setClassname(className);
-                    autotestToCreate.setNamespace(packageName);
-
                     autotestToCreate.setShouldCreateWorkItem(false);
                     try {
                         AutotestDto autotest = testItApi.getAutotestsClient().createAutotest(autotestToCreate);
