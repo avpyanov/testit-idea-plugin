@@ -17,4 +17,5 @@ public class TestItSettings {
     private String rootSectionId;
     private String featureAttributeId;
     private String storyAttributeId;
+
 }
