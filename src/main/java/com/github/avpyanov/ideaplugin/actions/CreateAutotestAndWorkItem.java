@@ -34,17 +34,18 @@ public class CreateAutotestAndWorkItem extends AnAction {
             final var packageName = ((PsiJavaFile) element).getPackageName();
             final var className = ((PsiJavaFile) element).getClasses()[0].getName();
             for (Map.Entry<PsiMethod, TestCase> entry : testCaseMap.entrySet()) {
-                if (!entry.getKey().hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getTmsLinkAnnotation())) {
+                if (!entry.getKey().hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getAutotestAnnotation())) {
                     TestItApi testItApi = new TestItApi(Objects.requireNonNull(settings.getState()).getEndpoint(), settings.getState().getToken());
-                    AutotestPostRequestDto autotestToCreate = AutotestDtoUtils.mapEntry(entry);
-                    autotestToCreate.setExternalId(packageName + ":" + className + ":" + entry.getKey().getName());
+                    AutotestPostRequestDto autotestToCreate = AutotestDtoUtils.mapEntry(packageName, className, entry);
                     autotestToCreate.setProjectId(settings.getState().getProjectId());
-                    autotestToCreate.setClassname(className);
-                    autotestToCreate.setNamespace(packageName);
                     autotestToCreate.setShouldCreateWorkItem(true);
                     try {
                         AutotestDto autotest = testItApi.getAutotestsClient().createAutotest(autotestToCreate);
-                        AnnotationUtils.addTmsAnnotation(entry.getKey(), String.valueOf(autotest.getGlobalId()));
+                        String workItemGlobalId = testItApi.getAutotestsClient().
+                                getLinkedWorkItems(autotest.getGlobalId(), false)
+                                .get(0)
+                                .getGlobalId();
+                        AnnotationUtils.addAutotestAndWorkItemAnnotations(entry.getKey(), autotest.getGlobalId(), workItemGlobalId);
                     } catch (Exception e) {
                         throw new PluginException("Failed to create autotest and work item", e);
                     }

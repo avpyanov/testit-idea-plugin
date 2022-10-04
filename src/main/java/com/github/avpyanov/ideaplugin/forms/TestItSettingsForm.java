@@ -17,8 +17,8 @@ public class TestItSettingsForm extends JFrame {
         tabbedPane.add(exportSettings);
 
         setTitle("Settings");
-        setSize(400, 500);
         add(tabbedPane);
+        setSize(450, 500);
         setLocationRelativeTo(null);
 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();

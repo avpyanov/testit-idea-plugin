@@ -81,9 +81,14 @@ public class PsiUtils {
         return factory.createAnnotationFromText(annotation, context);
     }
 
-    public static PsiAnnotation createTmsAnnotation(final PsiMethod method, final String key) {
+    public static PsiAnnotation createAutotestAnnotation(final PsiMethod method, final String key) {
         return createAnnotation(String.format("@%s(\"%s\")",
-                Objects.requireNonNull(exportSettings.getState()).getTmsLinkAnnotation(), key), method);
+                Objects.requireNonNull(exportSettings.getState()).getAutotestAnnotation(), key), method);
+    }
+
+    public static PsiAnnotation createManualTestAnnotation(final PsiMethod method, final String key) {
+        return createAnnotation(String.format("@%s(\"%s\")",
+                Objects.requireNonNull(exportSettings.getState()).getManualTestAnnotation(), key), method);
     }
 
     public static void optimizeImports(final PsiJavaFile file) {
@@ -102,6 +107,20 @@ public class PsiUtils {
         Optional<PsiClass> possibleClass = Optional.ofNullable(JavaPsiFacade.getInstance(project)
                 .findClass(qualifiedName, GlobalSearchScope.everythingScope(project)));
         possibleClass.ifPresent(psiClass -> JavaCodeStyleManager.getInstance(project).addImport(file, psiClass));
+    }
+
+    public static String getAutotestId(PsiMethod method) {
+        return method.getAnnotation(exportSettings.getState().getAutotestAnnotation())
+                .findAttributeValue("value")
+                .getText()
+                .replace("\"", "");
+    }
+
+    public static String getManualTestId(PsiMethod method) {
+        return method.getAnnotation(exportSettings.getState().getManualTestAnnotation())
+                .findAttributeValue("value")
+                .getText()
+                .replace("\"", "");
     }
 
     private static String getName(final PsiMethod method) {

@@ -55,7 +55,7 @@ public class CreateAutotestForExistingWorkItemForm extends JFrame {
                 autotestToCreate.setWorkItemIdsForLinkWithAutoTest(List.of(workItem.getId()));
                 autotestToCreate.setProjectId(testItSettingsStorage.getState().getProjectId());
                 AutotestDto autotest = testItApi.getAutotestsClient().createAutotest(autotestToCreate);
-                AnnotationUtils.addTmsAnnotation(entry.getKey(), String.valueOf(autotest.getGlobalId()));
+                AnnotationUtils.addAutotestAnnotation(entry.getKey(), String.valueOf(autotest.getGlobalId()));
                 setVisible(false);
             } catch (Exception e) {
                 throw new PluginException("Failed to create autotest for work item", e);

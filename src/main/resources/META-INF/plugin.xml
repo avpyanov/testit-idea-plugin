@@ -52,6 +52,9 @@
             <action id="com.github.avpyanov.ideaplugin.actions.UpdateAutotest"
                     class="com.github.avpyanov.ideaplugin.actions.UpdateAutotest"
                     text="Update Autotest"/>
+            <action id="com.github.avpyanov.ideaplugin.actions.LinkAutotestAndWorkItem"
+                    class="com.github.avpyanov.ideaplugin.actions.LinkAutotestAndWorkItem"
+                    text="Link Autotest and WorkItem"/>
         </group>
     </actions>
 </idea-plugin>

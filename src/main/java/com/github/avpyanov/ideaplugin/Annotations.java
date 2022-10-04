@@ -7,6 +7,9 @@ public final class Annotations {
     public static final String JUNIT5_DISPLAY_NAME_ANNOTATION = "org.junit.jupiter.api.DisplayName";
 
     public static final String ALLURE_TMS_LINK_ANNOTATION = "io.qameta.allure.TmsLink";
+    public static final String ALLURE_ID_ANNOTATION = "io.qameta.allure.AllureId";
+
+
     public static final String ALLURE_STEP_ANNOTATION = "io.qameta.allure.Step";
     public static final String ALLURE_EPIC_ANNOTATION = "io.qameta.allure.Epic";
     public static final String ALLURE_FEATURE_ANNOTATION = "io.qameta.allure.Feature";

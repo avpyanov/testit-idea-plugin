@@ -10,13 +10,15 @@ import lombok.ToString;
 @ToString
 public class ExportSettings {
 
-    private String tmsLinkAnnotation;
+    private String manualTestAnnotation;
+    private String autotestAnnotation;
     private String testRunner;
     private String testAnnotation;
     private String testNameAnnotation;
 
     public ExportSettings() {
-        tmsLinkAnnotation = Annotations.ALLURE_TMS_LINK_ANNOTATION;
+        manualTestAnnotation = Annotations.ALLURE_TMS_LINK_ANNOTATION;
+        autotestAnnotation = Annotations.ALLURE_ID_ANNOTATION;
         testRunner = TestRunners.TESTNG.value();
         testAnnotation = Annotations.TESTNG_TEST_ANNOTATION;
         testNameAnnotation = "";

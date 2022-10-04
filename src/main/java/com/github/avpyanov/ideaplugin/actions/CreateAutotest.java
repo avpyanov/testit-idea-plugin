@@ -35,14 +35,14 @@ public class CreateAutotest extends AnAction {
             final var packageName = ((PsiJavaFile) element).getPackageName();
             final var className = ((PsiJavaFile) element).getClasses()[0].getName();
             for (Map.Entry<PsiMethod, TestCase> entry : testCaseMap.entrySet()) {
-                if (!entry.getKey().hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getTmsLinkAnnotation())) {
+                if (!entry.getKey().hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getAutotestAnnotation())) {
                     TestItApi testItApi = new TestItApi(Objects.requireNonNull(settings.getState()).getEndpoint(), settings.getState().getToken());
                     AutotestPostRequestDto autotestToCreate = AutotestDtoUtils.mapEntry(packageName, className, entry);
                     autotestToCreate.setProjectId(settings.getState().getProjectId());
                     autotestToCreate.setShouldCreateWorkItem(false);
                     try {
                         AutotestDto autotest = testItApi.getAutotestsClient().createAutotest(autotestToCreate);
-                        AnnotationUtils.addTmsAnnotation(entry.getKey(), String.valueOf(autotest.getGlobalId()));
+                        AnnotationUtils.addAutotestAnnotation(entry.getKey(), String.valueOf(autotest.getGlobalId()));
                     } catch (Exception e) {
                         throw new PluginException("Failed to create autotest", e);
                     }

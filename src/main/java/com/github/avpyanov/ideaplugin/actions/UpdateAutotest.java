@@ -38,13 +38,13 @@ public class UpdateAutotest extends AnAction {
             final var className = ((PsiJavaFile) element).getClasses()[0].getName();
             List<String> idList = new ArrayList<>();
             for (Map.Entry<PsiMethod, TestCase> entry : testCaseMap.entrySet()) {
-                if (entry.getKey().hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getTmsLinkAnnotation())) {
+                if (entry.getKey().hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getAutotestAnnotation())) {
                     String globalId;
                     try {
                         TestItApi testItApi = new TestItApi(testItSettings.getState().getEndpoint(), testItSettings.getState().getToken());
                         List<TestStep> steps = PsiUtils.getSteps(entry.getKey());
                         globalId = entry.getKey()
-                                .getAnnotation(exportSettings.getState().getTmsLinkAnnotation())
+                                .getAnnotation(exportSettings.getState().getAutotestAnnotation())
                                 .findAttributeValue("value")
                                 .getText()
                                 .replace("\"", "");
@@ -54,17 +54,18 @@ public class UpdateAutotest extends AnAction {
                         updateAutoTestDto.setId(id);
                         updateAutoTestDto.setGlobalId(globalId);
                         updateAutoTestDto.setProjectId(testItSettings.getState().getProjectId());
-
                         testItApi.getAutotestsClient().updateAutotest(updateAutoTestDto);
                     } catch (Exception e) {
                         throw new PluginException("Failed to update autotest " + entry.getKey().getName(), e);
                     }
                     idList.add(globalId);
                 }
+            } if (idList.isEmpty()){
+                Messages.showInfoMessage("No autotests to update","Update Autotest");
+            } else {
+                Messages.showInfoMessage("Updated tests: " + idList,
+                        "Success!");
             }
-            Messages.showMessageDialog("Updated tests: " + idList,
-                    "Success!",
-                    Messages.getInformationIcon());
         }
     }
 }

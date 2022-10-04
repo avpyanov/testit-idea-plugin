@@ -12,7 +12,6 @@ import java.util.Objects;
 
 public class ExportSettingsForm extends JPanel {
 
-    private final ExportSettingsStorage settings = ExportSettingsStorage.getInstance();
     private final JFrame frame;
     private JComboBox<JXComboBox> testRunner;
 
@@ -21,20 +20,21 @@ public class ExportSettingsForm extends JPanel {
     private JTextField featureField;
     private JTextField storyField;
     private JTextField stepField;
-    private JTextField tmsField;
-
+    private JTextField manualTestAnnotation;
+    private JTextField autotestAnnotationField;
     private JTextField testField;
     private JTextField testNameField;
     private JButton saveButton;
     private JButton resetButton;
     private JButton cancelButton;
 
+
     public ExportSettingsForm(JFrame frame) {
+        ExportSettings settings = ExportSettingsStorage.getInstance().getState();
         this.frame = frame;
         setName("Export");
         setLayout(new BorderLayout());
         add(exportSettings);
-
         epicField.setText(Annotations.ALLURE_EPIC_ANNOTATION);
         epicField.setEnabled(false);
         featureField.setText(Annotations.ALLURE_FEATURE_ANNOTATION);
@@ -44,10 +44,11 @@ public class ExportSettingsForm extends JPanel {
         stepField.setText(Annotations.ALLURE_STEP_ANNOTATION);
         stepField.setEnabled(false);
 
-        tmsField.setText(Objects.requireNonNull(settings.getState()).getTmsLinkAnnotation());
-        testRunner.setSelectedItem(settings.getState().getTestRunner());
-        testField.setText(settings.getState().getTestAnnotation());
-        testNameField.setText(settings.getState().getTestNameAnnotation());
+        manualTestAnnotation.setText(Objects.requireNonNull(settings).getManualTestAnnotation());
+        autotestAnnotationField.setText(settings.getAutotestAnnotation());
+        testRunner.setSelectedItem(settings.getTestRunner());
+        testField.setText(settings.getTestAnnotation());
+        testNameField.setText(settings.getTestNameAnnotation());
 
         saveButton.addActionListener(e -> handleSaveButton());
         resetButton.addActionListener(e -> handleResetButton());
@@ -69,13 +70,15 @@ public class ExportSettingsForm extends JPanel {
     }
 
     private void handleResetButton() {
+        ExportSettingsStorage settings = ExportSettingsStorage.getInstance();
         testRunner.setSelectedItem(TestRunners.TESTNG.value());
         testField.setText(Annotations.TESTNG_TEST_ANNOTATION);
-        tmsField.setText(Annotations.ALLURE_TMS_LINK_ANNOTATION);
+        manualTestAnnotation.setText(Annotations.ALLURE_TMS_LINK_ANNOTATION);
+        autotestAnnotationField.setText(Annotations.ALLURE_ID_ANNOTATION);
         testNameField.setText("");
         testNameField.setEnabled(false);
         ExportSettings updatedSettings = new ExportSettings();
-        updatedSettings.setTmsLinkAnnotation(tmsField.getText());
+        updatedSettings.setManualTestAnnotation(manualTestAnnotation.getText());
         updatedSettings.setTestRunner(String.valueOf(testRunner.getSelectedItem()));
         updatedSettings.setTestAnnotation(testField.getText());
         updatedSettings.setTestNameAnnotation(testNameField.getText());
@@ -87,8 +90,10 @@ public class ExportSettingsForm extends JPanel {
     }
 
     private void handleSaveButton() {
+        ExportSettingsStorage settings = ExportSettingsStorage.getInstance();
         ExportSettings updatedSettings = new ExportSettings();
-        updatedSettings.setTmsLinkAnnotation(tmsField.getText());
+        updatedSettings.setManualTestAnnotation(manualTestAnnotation.getText());
+        updatedSettings.setAutotestAnnotation(autotestAnnotationField.getText());
         updatedSettings.setTestRunner(String.valueOf(testRunner.getSelectedItem()));
         updatedSettings.setTestAnnotation(testField.getText());
         updatedSettings.setTestNameAnnotation(testNameField.getText());

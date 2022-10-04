@@ -38,7 +38,7 @@ dependencies {
     implementation("io.github.openfeign.form:feign-form:3.8.0")
     implementation ("com.squareup.okhttp3:okhttp:4.9.3")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
-    implementation ("com.github.avpyanov:testit-client:0.2.5.1")
+    implementation ("com.github.avpyanov:testit-client:0.2.6.1")
     implementation ("org.apache.poi:poi-ooxml:5.2.2")
     implementation ("org.apache.poi:poi:5.2.2")
     implementation("org.slf4j:slf4j-api:2.0.0")

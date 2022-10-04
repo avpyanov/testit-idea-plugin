@@ -29,7 +29,7 @@ public class CreateAutotestForExistingWorkItem extends AnAction {
             final var packageName = ((PsiJavaFile) element).getPackageName();
             final var className = ((PsiJavaFile) element).getClasses()[0].getName();
             for (Map.Entry<PsiMethod, TestCase> entry : testCaseMap.entrySet()) {
-                if (!entry.getKey().hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getTmsLinkAnnotation())) {
+                if (!entry.getKey().hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getAutotestAnnotation())) {
                     List<TestStep> steps = PsiUtils.getSteps(entry.getKey());
                     entry.getValue().setSteps(steps);
                     new CreateAutotestForExistingWorkItemForm(packageName, className, entry).setVisible(true);
