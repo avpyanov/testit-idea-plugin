@@ -11,10 +11,12 @@ public class TestItSettingsForm extends JFrame {
         setResizable(false);
         GeneralSettingsForm generalSettings = new GeneralSettingsForm(this);
         ExportSettingsForm exportSettings = new ExportSettingsForm(this);
+        AllureSettingsForm allureSetting = new AllureSettingsForm(this);
 
         JTabbedPane tabbedPane = new JBTabbedPane();
         tabbedPane.add(generalSettings);
         tabbedPane.add(exportSettings);
+        tabbedPane.add(allureSetting);
 
         setTitle("Settings");
         add(tabbedPane);

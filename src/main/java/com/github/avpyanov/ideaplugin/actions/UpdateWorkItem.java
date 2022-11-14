@@ -3,11 +3,12 @@ package com.github.avpyanov.ideaplugin.actions;
 import com.github.avpyanov.ideaplugin.PluginException;
 import com.github.avpyanov.ideaplugin.model.TestCase;
 import com.github.avpyanov.ideaplugin.model.TestStep;
+import com.github.avpyanov.ideaplugin.settings.ExportSettingsStorage;
 import com.github.avpyanov.ideaplugin.testit.TestItSettingsStorage;
-import com.github.avpyanov.ideaplugin.utils.AutotestDtoUtils;
 import com.github.avpyanov.ideaplugin.utils.PsiUtils;
 import com.github.avpyanov.testit.client.TestItApiClient;
-import com.github.avpyanov.testit.client.dto.AutotestPutRequestDto;
+import com.github.avpyanov.testit.client.dto.WorkItem;
+import com.github.avpyanov.testit.client.dto.WorkItemPutDto;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -20,10 +21,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+import java.util.Objects;
 
-public class UpdateAutotest extends AnAction {
+import static com.github.avpyanov.ideaplugin.utils.WorkItemDtoUtils.getPutRequestDto;
 
+public class UpdateWorkItem extends AnAction {
+
+    private final ExportSettingsStorage exportSettings = ExportSettingsStorage.getInstance();
     private final TestItSettingsStorage testItSettings = TestItSettingsStorage.getInstance();
 
     @Override
@@ -32,36 +36,36 @@ public class UpdateAutotest extends AnAction {
         if (element instanceof PsiJavaFile) {
             final PsiJavaFile psiJavaFile = (PsiJavaFile) element;
             final Map<PsiMethod, TestCase> testCaseMap = PsiUtils.getTests(psiJavaFile.getClasses()[0]);
-            final var packageName = ((PsiJavaFile) element).getPackageName();
-            final var className = ((PsiJavaFile) element).getClasses()[0].getName();
             List<String> idList = new ArrayList<>();
             for (Map.Entry<PsiMethod, TestCase> entry : testCaseMap.entrySet()) {
-                if (PsiUtils.hasAutotestAnnotation(entry.getKey())) {
+                if (entry.getKey().hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getManualTestAnnotation())) {
                     String globalId;
                     try {
                         TestItApiClient testItApi = new TestItApiClient(testItSettings.getState().getEndpoint(),
                                 testItSettings.getState().getToken());
                         List<TestStep> steps = PsiUtils.getSteps(entry.getKey());
-                        globalId = PsiUtils.getAutotestId(entry.getKey());
-                        UUID id = testItApi.autotestsApi().getAutoTest(globalId).getId();
                         entry.getValue().setSteps(steps);
-                        AutotestPutRequestDto updateAutoTestDto = AutotestDtoUtils.getUpdateAutoTestDto(packageName, className, entry);
-                        updateAutoTestDto.setId(id);
-                        updateAutoTestDto.setGlobalId(globalId);
-                        updateAutoTestDto.setProjectId(testItSettings.getState().getProjectId());
-                        testItApi.autotestsApi().updateAutotest(updateAutoTestDto);
+                        globalId = entry.getKey()
+                                .getAnnotation(exportSettings.getState().getManualTestAnnotation())
+                                .findAttributeValue("value")
+                                .getText()
+                                .replace("\"", "");
+                        WorkItem workItem = testItApi.workItemsApi().getWorkItem(globalId);
+                        WorkItemPutDto putRequestDto = getPutRequestDto(workItem, entry);
+                        testItApi.workItemsApi().updateWorkItem(putRequestDto);
                     } catch (Exception e) {
-                        throw new PluginException("Failed to update autotest " + entry.getKey().getName(), e);
+                        throw new PluginException("Failed to update WorkItem " + entry.getKey().getName(), e);
                     }
                     idList.add(globalId);
                 }
             }
             if (idList.isEmpty()) {
-                Messages.showInfoMessage("No autotests to update", "Update Autotest");
+                Messages.showInfoMessage("No WorkItems to update", "Update WorkItem");
             } else {
-                Messages.showInfoMessage("Updated tests: " + idList,
+                Messages.showInfoMessage("Updated WorkItems: " + idList,
                         "Success!");
             }
+
         }
     }
 }

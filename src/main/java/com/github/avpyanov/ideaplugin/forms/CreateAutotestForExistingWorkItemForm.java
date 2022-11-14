@@ -5,7 +5,7 @@ import com.github.avpyanov.ideaplugin.model.TestCase;
 import com.github.avpyanov.ideaplugin.testit.TestItSettingsStorage;
 import com.github.avpyanov.ideaplugin.utils.AnnotationUtils;
 import com.github.avpyanov.ideaplugin.utils.AutotestDtoUtils;
-import com.github.avpyanov.testit.client.TestItApi;
+import com.github.avpyanov.testit.client.TestItApiClient;
 import com.github.avpyanov.testit.client.dto.AutotestDto;
 import com.github.avpyanov.testit.client.dto.AutotestPostRequestDto;
 import com.github.avpyanov.testit.client.dto.WorkItem;
@@ -48,13 +48,13 @@ public class CreateAutotestForExistingWorkItemForm extends JFrame {
         } else {
             try {
                 TestItSettingsStorage testItSettingsStorage = TestItSettingsStorage.getInstance();
-                TestItApi testItApi = new TestItApi(testItSettingsStorage.getState().getEndpoint(),
+                TestItApiClient testItApi = new TestItApiClient(testItSettingsStorage.getState().getEndpoint(),
                         testItSettingsStorage.getState().getToken());
-                WorkItem workItem = testItApi.getWorkItemsClient().getWorkItem(workItemIdField.getText());
+                WorkItem workItem = testItApi.workItemsApi().getWorkItem(workItemIdField.getText());
                 AutotestPostRequestDto autotestToCreate = AutotestDtoUtils.mapEntry(packageName, className, entry);
                 autotestToCreate.setWorkItemIdsForLinkWithAutoTest(List.of(workItem.getId()));
                 autotestToCreate.setProjectId(testItSettingsStorage.getState().getProjectId());
-                AutotestDto autotest = testItApi.getAutotestsClient().createAutotest(autotestToCreate);
+                AutotestDto autotest = testItApi.autotestsApi().createAutotest(autotestToCreate);
                 AnnotationUtils.addAutotestAnnotation(entry.getKey(), String.valueOf(autotest.getGlobalId()));
                 setVisible(false);
             } catch (Exception e) {

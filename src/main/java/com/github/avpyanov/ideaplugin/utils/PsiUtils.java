@@ -123,6 +123,14 @@ public class PsiUtils {
                 .replace("\"", "");
     }
 
+    public static boolean hasAutotestAnnotation(PsiMethod method) {
+        return method.hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getAutotestAnnotation());
+    }
+
+    public static boolean hasManualTestAnnotation(PsiMethod method) {
+        return method.hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getManualTestAnnotation());
+    }
+
     private static String getName(final PsiMethod method) {
         if (Objects.requireNonNull(exportSettings.getState()).getTestRunner().equals(TestRunners.TESTNG.value())) {
             return getAnnotationAttribute(method, exportSettings.getState().getTestAnnotation(), "description");

@@ -7,7 +7,7 @@ import com.github.avpyanov.ideaplugin.testit.TestItSettingsStorage;
 import com.github.avpyanov.ideaplugin.utils.AnnotationUtils;
 import com.github.avpyanov.ideaplugin.utils.AutotestDtoUtils;
 import com.github.avpyanov.ideaplugin.utils.PsiUtils;
-import com.github.avpyanov.testit.client.TestItApi;
+import com.github.avpyanov.testit.client.TestItApiClient;
 import com.github.avpyanov.testit.client.dto.AutotestDto;
 import com.github.avpyanov.testit.client.dto.AutotestPostRequestDto;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -35,13 +35,14 @@ public class CreateAutotestAndWorkItem extends AnAction {
             final var className = ((PsiJavaFile) element).getClasses()[0].getName();
             for (Map.Entry<PsiMethod, TestCase> entry : testCaseMap.entrySet()) {
                 if (!entry.getKey().hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getAutotestAnnotation())) {
-                    TestItApi testItApi = new TestItApi(Objects.requireNonNull(settings.getState()).getEndpoint(), settings.getState().getToken());
+                    TestItApiClient testItApi = new TestItApiClient(
+                            Objects.requireNonNull(settings.getState()).getEndpoint(), settings.getState().getToken());
                     AutotestPostRequestDto autotestToCreate = AutotestDtoUtils.mapEntry(packageName, className, entry);
                     autotestToCreate.setProjectId(settings.getState().getProjectId());
                     autotestToCreate.setShouldCreateWorkItem(true);
                     try {
-                        AutotestDto autotest = testItApi.getAutotestsClient().createAutotest(autotestToCreate);
-                        String workItemGlobalId = testItApi.getAutotestsClient().
+                        AutotestDto autotest = testItApi.autotestsApi().createAutotest(autotestToCreate);
+                        String workItemGlobalId = testItApi.autotestsApi().
                                 getLinkedWorkItems(autotest.getGlobalId(), false)
                                 .get(0)
                                 .getGlobalId();

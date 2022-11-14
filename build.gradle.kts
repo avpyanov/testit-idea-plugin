@@ -7,7 +7,7 @@ group = "com.github.avpyanov"
 version = "1.0"
 
 repositories {
-    mavenCentral();
+    mavenCentral()
     maven("https://jitpack.io")
 }
 
@@ -36,12 +36,15 @@ dependencies {
     implementation("io.github.openfeign:feign-okhttp:11.8")
     implementation("io.github.openfeign:feign-core:11.8")
     implementation("io.github.openfeign.form:feign-form:3.8.0")
-    implementation ("com.squareup.okhttp3:okhttp:4.9.3")
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
-    implementation ("com.github.avpyanov:testit-client:0.2.6.1")
-    implementation ("org.apache.poi:poi-ooxml:5.2.2")
-    implementation ("org.apache.poi:poi:5.2.2")
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("com.github.avpyanov:testit-client:0.3.2.4")
+    implementation("org.apache.poi:poi-ooxml:5.2.2")
+    implementation("org.apache.poi:poi:5.2.2")
     implementation("org.slf4j:slf4j-api:2.0.0")
+    implementation("io.qameta.allure:allure-java-commons:2.19.0")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.14.0")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
     compileOnly("org.projectlombok:lombok:1.18.22")
-    annotationProcessor( "org.projectlombok:lombok:1.18.22")
+    annotationProcessor("org.projectlombok:lombok:1.18.22")
 }
