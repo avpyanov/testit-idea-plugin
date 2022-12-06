@@ -13,26 +13,28 @@ import io.qameta.allure.model.TestResult;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class UpdateAutotestFromAllureForm extends JFrame {
 
-    private final String allurePath;
     private final List<String> autotestIds;
-    private final List<String> allureResultsFiles;
+    private final List<String> allureResultsList;
+    private final Map<String, TestResult> allureResultsMap;
     private JPanel updateAutotestFromAllurePanel;
     private JButton updateButton;
     private JButton cancelButton;
     private JComboBox<String> autotestIdField;
     private JComboBox<String> allureResultsField;
 
-    public UpdateAutotestFromAllureForm(List<String> autotestIds, List<String> allureResultsFiles, String allurePath) {
-        this.allurePath = allurePath;
+    public UpdateAutotestFromAllureForm(List<String> autotestIds, Map<String, TestResult> allureResultsMap) {
+        this.allureResultsMap = allureResultsMap;
         this.autotestIds = autotestIds;
-        this.allureResultsFiles = allureResultsFiles;
+        this.allureResultsList = new ArrayList<>(allureResultsMap.keySet());
         setTitle("Update autotest from allure results");
-        setSize(450, 150);
+        setSize(550, 150);
         setResizable(false);
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
         setLocation(dim.width / 2 - getSize().width / 2, dim.height / 2 - getSize().height / 2);
@@ -40,36 +42,34 @@ public class UpdateAutotestFromAllureForm extends JFrame {
         autotestIdField.setEditable(false);
         autotestIdField.setEnabled(true);
         Collections.sort(autotestIds);
-        Collections.sort(allureResultsFiles);
+        Collections.sort(allureResultsList);
         autotestIdField.setModel(new CollectionComboBoxModel<>(autotestIds));
         allureResultsField.setEditable(false);
         allureResultsField.setEnabled(true);
-        allureResultsField.setModel(new CollectionComboBoxModel<>(allureResultsFiles));
+        allureResultsField.setModel(new CollectionComboBoxModel<>(allureResultsList));
         updateButton.addActionListener(e -> handleUpdate());
         cancelButton.addActionListener(e -> handleCancel());
     }
 
     private void handleUpdate() {
         if (autotestIdField.getSelectedItem() != null && allureResultsField.getSelectedItem() != null) {
-            var allureResultsFile = allurePath + allureResultsField.getSelectedItem();
-            TestResult resultsFromFile = AllureUtils.getResultsFromFile(allureResultsFile);
-            List<StepResult> flattenSteps = AllureUtils.flattenSteps(resultsFromFile.getSteps());
+            TestResult testResult = allureResultsMap.get(allureResultsField.getSelectedItem().toString());
+            List<StepResult> flattenSteps = AllureUtils.flattenSteps(testResult.getSteps());
             AutotestDto autoTest = TestItClient.getClient().autotestsApi().getAutoTest(autotestIdField.getSelectedItem().toString());
             AutotestPutRequestDto autotestPutRequestDto = AutotestDtoUtils.getAutotestPutRequestDto(autoTest);
 
             List<AutotestStep> autotestSteps = AllureUtils.convertAllureSteps(flattenSteps);
-            autotestPutRequestDto.setSteps(null);
             autotestPutRequestDto.setSteps(autotestSteps);
             TestItClient.getClient().autotestsApi().updateAutotest(autotestPutRequestDto);
 
             autotestIds.remove(autotestIdField.getSelectedItem().toString());
-            allureResultsFiles.remove(allureResultsField.getSelectedItem().toString());
+            allureResultsList.remove(allureResultsField.getSelectedItem().toString());
 
             if (autotestIds.isEmpty()) {
                 setVisible(false);
             } else {
                 autotestIdField.setModel(new CollectionComboBoxModel<>(autotestIds));
-                allureResultsField.setModel(new CollectionComboBoxModel<>(allureResultsFiles));
+                allureResultsField.setModel(new CollectionComboBoxModel<>(allureResultsList));
             }
         } else {
             Messages.showInfoMessage("Select autotest and allure results file first",

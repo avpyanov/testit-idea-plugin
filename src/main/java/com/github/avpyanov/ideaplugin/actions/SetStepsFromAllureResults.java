@@ -10,9 +10,11 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiJavaFile;
 import com.intellij.psi.PsiMethod;
+import io.qameta.allure.model.TestResult;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,13 +30,20 @@ public class SetStepsFromAllureResults extends AnAction {
             final Map<PsiMethod, TestCase> testCaseMap = PsiUtils.getTests(psiJavaFile.getClasses()[0]);
             List<String> autotestIds = new ArrayList<>();
             List<String> allureResultsFiles = AllureUtils.getAllureResultsFiles(projectDir);
+            Map<String,TestResult> allureResultsMap = new HashMap<>();
+
+            for (String allureFile : allureResultsFiles) {
+                TestResult testResult = AllureUtils.getResultsFromFile(allurePath + allureFile);
+                allureResultsMap.put(testResult.getName(),testResult);
+            }
+
             for (Map.Entry<PsiMethod, TestCase> entry : testCaseMap.entrySet()) {
                 if (PsiUtils.hasAutotestAnnotation(entry.getKey())) {
                     autotestIds.add(PsiUtils.getAutotestId(entry.getKey()));
                 }
             }
-            if (!allureResultsFiles.isEmpty() && !autotestIds.isEmpty()) {
-                new UpdateAutotestFromAllureForm(autotestIds, allureResultsFiles, allurePath).setVisible(true);
+            if (!autotestIds.isEmpty()&& !allureResultsMap.isEmpty()) {
+                new UpdateAutotestFromAllureForm(autotestIds, allureResultsMap).setVisible(true);
             }
         }
     }
