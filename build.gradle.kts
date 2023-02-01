@@ -26,7 +26,6 @@ tasks {
     }
 
     patchPluginXml {
-        sinceBuild.set("2022.*")
         untilBuild.set("2023.*")
     }
 }
