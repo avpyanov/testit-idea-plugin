@@ -20,6 +20,13 @@ public class PsiUtils {
 
     private static final ExportSettingsStorage exportSettings = ExportSettingsStorage.getInstance();
 
+    public static List<PsiMethod> getTestsMethods(final PsiElement element) {
+        final PsiClass psiClass = (PsiClass) element;
+        return Arrays.stream(psiClass.getMethods())
+                .filter(m -> m.hasAnnotation(Objects.requireNonNull(exportSettings.getState()).getTestAnnotation()))
+                .collect(Collectors.toList());
+    }
+
     public static Map<PsiMethod, TestCase> getTestsFromClass(final PsiElement element) {
         final PsiClass psiClass = (PsiClass) element;
         return Arrays.stream(psiClass.getMethods())

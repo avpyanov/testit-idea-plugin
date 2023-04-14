@@ -42,6 +42,16 @@ public class AnnotationUtils {
                 }), "Add Import", null);
     }
 
+
+    public static void removeAutotestAnnotation(PsiMethod method) {
+        final Project project = method.getProject();
+        CommandProcessor.getInstance().executeCommand(project,
+                () -> ApplicationManager.getApplication().runWriteAction(() -> {
+                    Objects.requireNonNull(method.getAnnotation(Objects.requireNonNull(exportSettings.getState()).getAutotestAnnotation())).delete();
+                    PsiUtils.optimizeImports((PsiJavaFile) method.getContainingFile());
+                }), "Add Import", null);
+    }
+
     private AnnotationUtils() {
     }
 }

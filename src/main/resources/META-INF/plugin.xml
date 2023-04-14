@@ -62,6 +62,9 @@
             <action id="com.github.avpyanov.ideaplugin.actions.SetStepsFromAllureResults"
                     class="com.github.avpyanov.ideaplugin.actions.SetStepsFromAllureResults"
                     text="Update Autotest Steps from Allure"/>
+            <action id="com.github.avpyanov.ideaplugin.actions.RemoveAutotest"
+                    class="com.github.avpyanov.ideaplugin.actions.RemoveAutotest"
+                    text="Remove Autotest"/>
         </group>
     </actions>
 </idea-plugin>
