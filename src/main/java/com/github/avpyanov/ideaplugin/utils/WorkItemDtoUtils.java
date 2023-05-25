@@ -58,6 +58,32 @@ public class WorkItemDtoUtils {
         return workItemSteps;
     }
 
+    public static WorkItemPutDto getPutRequestDto(WorkItem workItem) {
+        WorkItemPutDto workItemPutDto = new WorkItemPutDto();
+        workItemPutDto.setName(workItem.getName());
+        workItemPutDto.setId(workItem.getId());
+        workItemPutDto.setSectionId(workItem.getSectionId());
+        workItemPutDto.setAttachments(workItem.getAttachments()
+                .stream().map(attachment -> new IdDto(attachment.getId()))
+                .collect(Collectors.toList()));
+        workItemPutDto.setAutoTests(workItem.getAutoTests()
+                .stream().map(autotestDto -> new IdDto(autotestDto.getId()))
+                .collect(Collectors.toList()));
+        workItemPutDto.setDescription(workItem.getDescription());
+        workItemPutDto.setState(workItem.getState());
+        workItemPutDto.setPriority(workItem.getPriority());
+        workItemPutDto.setSteps(workItem.getSteps());
+        workItemPutDto.setPreconditionSteps(workItem.getPreconditionSteps());
+        workItemPutDto.setPostconditionSteps(workItem.getPostconditionSteps());
+        workItemPutDto.setAttributes(workItem.getAttributes());
+        workItemPutDto.setDuration(workItem.getDuration());
+        workItemPutDto.setLinks(workItem.getLinks());
+        workItemPutDto.setTags(workItem.getTags());
+        return workItemPutDto;
+    }
+
     private WorkItemDtoUtils() {
     }
+
+
 }

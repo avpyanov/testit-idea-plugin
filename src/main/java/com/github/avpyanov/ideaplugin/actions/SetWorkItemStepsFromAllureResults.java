@@ -1,7 +1,7 @@
 package com.github.avpyanov.ideaplugin.actions;
 
 import com.github.avpyanov.ideaplugin.allure.AllureUtils;
-import com.github.avpyanov.ideaplugin.forms.UpdateAutotestFromAllureForm;
+import com.github.avpyanov.ideaplugin.forms.UpdateWorkItemFromAllureForm;
 import com.github.avpyanov.ideaplugin.model.TestCase;
 import com.github.avpyanov.ideaplugin.utils.PsiUtils;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SetStepsFromAllureResults extends AnAction {
+public class SetWorkItemStepsFromAllureResults extends AnAction {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent anActionEvent) {
@@ -28,7 +28,7 @@ public class SetStepsFromAllureResults extends AnAction {
         if (element instanceof PsiJavaFile) {
             final PsiJavaFile psiJavaFile = (PsiJavaFile) element;
             final Map<PsiMethod, TestCase> testCaseMap = PsiUtils.getTests(psiJavaFile.getClasses()[0]);
-            List<String> autotestIds = new ArrayList<>();
+            List<String> workItemIds = new ArrayList<>();
             List<String> allureResultsFiles = AllureUtils.getAllureResultsFiles(projectDir);
             Map<String,TestResult> allureResultsMap = new HashMap<>();
 
@@ -38,12 +38,12 @@ public class SetStepsFromAllureResults extends AnAction {
             }
 
             for (Map.Entry<PsiMethod, TestCase> entry : testCaseMap.entrySet()) {
-                if (PsiUtils.hasAutotestAnnotation(entry.getKey())) {
-                    autotestIds.add(PsiUtils.getAutotestId(entry.getKey()));
+                if (PsiUtils.hasManualTestAnnotation(entry.getKey())) {
+                    workItemIds.add(PsiUtils.getManualTestId(entry.getKey()));
                 }
             }
-            if (!autotestIds.isEmpty()&& !allureResultsMap.isEmpty()) {
-                new UpdateAutotestFromAllureForm(autotestIds, allureResultsMap).setVisible(true);
+            if (!workItemIds.isEmpty()&& !allureResultsMap.isEmpty()) {
+                new UpdateWorkItemFromAllureForm(workItemIds, allureResultsMap).setVisible(true);
             }
         }
     }

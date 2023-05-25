@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.avpyanov.ideaplugin.PluginException;
 import com.github.avpyanov.testit.client.dto.AutotestStep;
+import com.github.avpyanov.testit.client.dto.WorkItemStep;
 import io.qameta.allure.model.StepResult;
 import io.qameta.allure.model.TestResult;
 
@@ -68,6 +69,16 @@ public class AllureUtils {
             autotestSteps.add(autotestStep);
         }
         return autotestSteps;
+    }
+
+    public static List<WorkItemStep> convertAllureStepsToWorkItemSteps(List<StepResult> steps) {
+        List<WorkItemStep> workItemSteps = new ArrayList<>();
+        for (StepResult step : steps) {
+            WorkItemStep workItemStep = new WorkItemStep();
+            workItemStep.action(step.getName());
+            workItemSteps.add(workItemStep);
+        }
+        return workItemSteps;
     }
 
     private AllureUtils() {

@@ -59,9 +59,12 @@
             <action id="com.github.avpyanov.ideaplugin.actions.LinkAutotestAndWorkItem"
                     class="com.github.avpyanov.ideaplugin.actions.LinkAutotestAndWorkItem"
                     text="Link Autotest and WorkItem"/>
-            <action id="com.github.avpyanov.ideaplugin.actions.SetStepsFromAllureResults"
-                    class="com.github.avpyanov.ideaplugin.actions.SetStepsFromAllureResults"
+            <action id="com.github.avpyanov.ideaplugin.actions.SetAutotestStepsFromAllureResults"
+                    class="com.github.avpyanov.ideaplugin.actions.SetAutotestStepsFromAllureResults"
                     text="Update Autotest Steps from Allure"/>
+            <action id="com.github.avpyanov.ideaplugin.actions.SetWorkItemStepsFromAllureResults"
+                    class="com.github.avpyanov.ideaplugin.actions.SetWorkItemStepsFromAllureResults"
+                    text="Update WorkItem Steps from Allure"/>
             <action id="com.github.avpyanov.ideaplugin.actions.RemoveAutotest"
                     class="com.github.avpyanov.ideaplugin.actions.RemoveAutotest"
                     text="Remove Autotest"/>
