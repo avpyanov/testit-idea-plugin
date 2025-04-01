@@ -1,6 +1,6 @@
 plugins {
     id("java")
-    id("org.jetbrains.intellij") version "1.5.2"
+    id("org.jetbrains.intellij") version "1.13.3"
 }
 
 group = "com.github.avpyanov"
@@ -40,7 +40,6 @@ dependencies {
     implementation("com.github.avpyanov:testit-client:0.3.2.4")
     implementation("org.apache.poi:poi-ooxml:5.2.2")
     implementation("org.apache.poi:poi:5.2.2")
-    implementation("org.slf4j:slf4j-api:2.0.0")
     implementation("io.qameta.allure:allure-java-commons:2.19.0")
     implementation("com.fasterxml.jackson.core:jackson-core:2.14.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.0")
